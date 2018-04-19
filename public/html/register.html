@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>注册</title>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/login.css">
+    <script src="/javascripts/jquery-3.3.1.js"></script>
+    <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>
+    <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/localization/messages_zh.js"></script>
+</head>
+
+<body>
+    <h1>注册页面</h1>
+    <!--     <video controls src="/images/12.28.mp4" height="300" width="540"></video> -->
+    <!--   <input type="number" name="" min="10" max="100" step="1"> -->
+    <div class="login">
+        <form method="post" action="/login" id="registerForm">
+            <p>
+                <label for="email">邮箱</label>
+                <input type="email" list="lst" id="email" placeholder="请输入Email" autofocus="autofocus" />
+            </p>
+            <p>
+                <label>用户名</label>
+                <input type="text" name="name" id="username" diyCheck="小写字母开头,6-11位字母和数字组合" required="required" diyRule="[a-z][A-Za-z0-9](5,10)" /><span id="usernameTip"></span>
+            </p>
+            <datalist id="lst"></datalist>
+            <p>
+                <label>密码</label>
+                <input type="password" name="password" id="userpwd" diyCheck="6-11位字母和数字组合" required="required" diyRule="[A-Za-z0-9](6,11)" />
+            </p>
+            <p>
+                <label>确认密码</label>
+                <input type="password" name="" id="userpwd2" diyCheck="输入相同的密码" required="required" diyRule="[A-Za-z0-9](6,11)"  equalTo="#userpwd"/><span id="pwdTip"></span>
+            </p>
+            <p>
+                <input type="submit" name="" value="注册" id="btn_reg" />
+            </p>
+        </form>
+    </div>
+    <script>
+  
+    $(document).ready(function() {
+            jQuery.validator.addMethod("diyCheck",function(value,element,param){
+           var abc= $(element);
+    var diyRule = abc.attr('diyRule');
+    var exp = new RegExp(diyRule);
+    return this.optional(element) || exp.test(value);
+    },$.validator.format("{0}"));  
+        $("#registerForm").validate({debug:true});  
+        $("#username").blur(function() {
+          $.post("/login/checkUser",{
+            name:$(this).val()
+          },function(data,status){
+            var json = new Function("return" + data)()
+            var tip = ""
+            if (json.success) {
+                tip = "✔该用户可以注册"
+            } else {
+                tip = "×该用户已存在"
+            }
+            $("usernameTip").innerHTML = tip
+          })
+        })
+    });
+    var eg = {}
+    eg.$ = function(id) {
+        return document.getElementById(id)
+    }
+    eg.regCheck = function() {
+        var username = eg.$("username")
+        var userpwd = eg.$("userpwd")
+        var userpwd2 = eg.$("userpwd2")
+        // if (username.value == "") {
+        //     alert("账号不能为空")
+        //     return false
+        // }
+        // if (userpwd.value == "") {
+        //     alert("密码不能为空")
+        //     return false
+        // }
+        if (userpwd.value != userpwd2.value) {
+            alert("两次密码不相同！")
+            return false
+        }
+
+        return true
+    }
+    // eg.addListener=function(target,type,handler){
+    //     if (target.addEventListener) {
+    //         target.addEventListener(type,handler,false)
+    //     }
+    // }
+    eg.AJAX = function(config, callback) {
+        var xmlhttp;
+        if (window.XMLHttpRequest) {
+            //  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+            xmlhttp = new XMLHttpRequest();
+        } else {
+            // IE6, IE5 浏览器执行代码
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                callback(xmlhttp.responseText)
+            }
+        }
+        xmlhttp.open(config.TYPE, config.URL, true);
+        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xmlhttp.send(config.DATA);
+        console.log(config)
+    }
+
+
+    eg.checkUser = function() {
+        var userName = eg.$("username")
+        if (userName.value == "") {
+            eg.$("usernameTip").innerHTML = ""
+            return
+        }
+        eg.AJAX({
+            TYPE: "POST",
+            URL: "login/checkUser",
+            DATA: "name=" + userName.value
+        }, function(data) {
+            var json = new Function("return" + data)()
+            var tip = ""
+            if (json.success) {
+                tip = "✔该用户可以注册"
+            } else {
+                tip = "×该用户已存在"
+            }
+            eg.$("usernameTip").innerHTML = tip
+        });
+    }
+
+    var userName = eg.$("username")
+    var userpwd = eg.$("userpwd")
+    var userpwd2 = eg.$("userpwd2")
+    var uemail = eg.$("email")
+    var lst = eg.$("lst")
+    // userName.onblur = function() {
+    //     console.log("onblur")
+    //     eg.checkUser()
+    // / }
+    eg.checkPwd = function() {
+        var userpwd = eg.$("userpwd")
+        var userpwd2 = eg.$("userpwd2")
+        var tip = ""
+        if (userpwd.value != userpwd2.value) {
+            tip = "×两次密码不相同"
+        } else {
+            tip = "✔"
+        }
+        eg.$("pwdTip").innerHTML = tip
+    }
+    eg.$("userpwd").onblur = function() {
+        eg.checkPwd()
+    }
+    eg.$("userpwd2").onblur = function() {
+        eg.checkPwd()
+    }
+
+    var datalist = ["qq.com", "163.com", "gmail.com", "sina.com", "126.com"]
+    uemail.oninput = function() {
+        lst.innerHTML = ""
+        var k = uemail.value
+        if (k.indexOf("@") > -1) { return }
+        if (k.value == "") { return }
+        var newStr = ""
+        for (var i = 0; i < datalist.length; i++) {
+            newStr += '<option value="' + k + "@" + datalist[i] + '"/>';
+        }
+        lst.innerHTML = newStr
+    }
+
+    </script>
+</body>
+
+</html>

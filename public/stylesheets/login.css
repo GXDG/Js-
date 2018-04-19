@@ -1,0 +1,24 @@
+h1 {
+    background-color: #6495ed;
+}
+
+.login {
+/*    background-image: url('/images/preview.jpg');*/
+    background-repeat: no-repeat;
+    background-position: center;
+    background-clip: content-box;
+    padding: 25px;
+    border: 25px  ;
+    width: 60%;
+    margin: auto;
+
+}
+
+
+
+
+form {
+	color: red
+	text-decoration-color: #ffffff;
+ 
+}

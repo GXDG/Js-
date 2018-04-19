@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>登录页面</title>
+</head>
+
+<body>
+    <form method="post" action="">
+        <input type="hidden" name="" id="errnum" value="0" /> 账号
+        <input type="text" name="" id="username" />
+        <br/>
+        <br/> 密码
+        <input type="password" name="" id="userpwd" />
+        <br/>
+        <br/> 确认密码
+        <input type="password" name="" id="userpwd2" />
+        <br/>
+        <br/> 简介：
+        <textarea name="" rows="4" cols="18" id="about"></textarea>
+        <br/>
+        <br/>
+        <input type="submit" name="" value="注册" id="btn_reg" onclick="return eg.regCheck()" />
+        <input type="button" name="" value="解锁" id="btn_unlock" onclick="eg.unlock()" style="display: none;" />
+    </form>
+    <script>
+    var eg = {}
+    eg.$ = function(id) {
+        return document.getElementById(id)
+    }
+    eg.regCheck = function() {
+        var username = eg.$("username")
+        var userpwd = eg.$("userpwd")
+        var userpwd2 = eg.$("userpwd2")
+        if (username.value == "") {
+            alert("账号不能为空")
+            return false
+        }
+        if (userpwd.value == "") {
+            alert("密码不能为空")
+            return false
+        }
+        if (userpwd.value != userpwd2.value) {
+            alert("两次密码不相同！")
+            return false
+        }
+        var about = eg.$("about")
+        if (about.value.length > 60) {
+            alert("简介太长！")
+            eg.err()
+            return false
+        }
+        return true
+    }
+    eg.err = function() {
+        var en = eg.$("errnum")
+        var old = en.value
+        en.value = parseInt(old) + 1
+        eg.lock()
+
+    }
+    eg.lock = function() {
+        var en = eg.$("errnum")
+        if (parseInt(en.value) > 2) {
+            eg.$("btn_reg").disabled = true
+            eg.$("btn_unlock").style.display = "block"
+        }
+    }
+    eg.unlock = function() {
+        eg.$("btn_reg").disabled = false
+        eg.$("btn_unlock").style.display = "none"
+    }
+    </script>
+</body>
+
+</html>

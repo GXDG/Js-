@@ -1,0 +1,20 @@
+<html>
+<head>
+<script src="/javascripts/ssr.js"></script>
+<script >
+function show_input()
+{
+x=document.getElementById("tv_ssr")
+document.getElementById("tv_ssr_analyze").value=decodeSsr(x.value)
+}
+</script>
+</head>
+<div> 
+	<textarea type="text" cols="40" rows="40" id="tv_ssr" value="">ssr://NDMuMjI1LjEwMC4yMTI6ODA4MDphdXRoX3NoYTFfdjQ6Y2hhY2hhMjA6aHR0cF9zaW1wbGU6Wkc5MVlpNXBidy8_b2Jmc3BhcmFtPTVyZTM1cmVHNVktQzVwV3cmcHJvdG9wYXJhbT01WTJQNks2dTVZLUM1cFd3JnJlbWFya3M9NmFhWjVyaXY1cmlqNXJpajVweTZNUSZncm91cD1SM0p2ZFhEbnU0UQ</textarea>
+<input type="button" id="btn_ssr" value="解析" onclick="show_input()" style="text-align: center;padding: 20px">
+<textarea type="text" id="tv_ssr_analyze" value="" cols="40" rows="40"></textarea>
+</div>
+
+
+</body>
+</html>
