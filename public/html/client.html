@@ -2,156 +2,74 @@
 <html>
 
 <head>
-    <title>注册</title>
+    <title>登录</title>
     <link rel="stylesheet" type="text/css" href="/stylesheets/login.css">
+        <script src="/javascripts/jquery-3.3.1.js"></script>
+    <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>
+    <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/localization/messages_zh.js"></script>
 </head>
 
 <body>
-    <h1>注册页面</h1>
-<!--     <video controls src="/images/12.28.mp4" height="300" width="540"></video> -->
-<!--   <input type="number" name="" min="10" max="100" step="1"> -->
-<div class="login">
-        <form method="post" action="/login">
-      
-        邮箱
-        <input type="email"  list="lst" id="email" placeholder="请输入Email" autofocus="autofocus" />
-        <datalist id="lst"></datalist>
-        <br/>
-        <br/> 账号
-        <input type="text" name="name" id="username" placeholder="小写字母开头,6-11位字母和数字组合" required="required" pattern="[a-z][A-Za-z0-9](5,10)" /><span id="usernameTip"></span>
-        <br/>
-        <br/> 密码
-        <input type="password" name="password" id="userpwd" placeholder="6-11位字母和数字组合" required="required" pattern="[A-Za-z0-9](6,11)" />
-        <br/>
-        <br/> 确认密码
-        <input type="password" name="" id="userpwd2" placeholder="输入相同的密码" required="required" pattern="[A-Za-z0-9](6,11)" /><span id="pwdTip"></span>
-        <br/>
-        <br/>
-        <input type="submit" name="" value="注册" id="btn_reg" onclick="return eg.regCheck()" />
-    </form>
-</div>
-
+    <h1>登录页面</h1>
+    <div class="login">
+        <form  id="loginForm" >
+            <p>
+                <label>用户名</label>
+                <input type="text" name="name" id="username" diyCheck="小写字母开头,6-11位字母和数字组合" required="required" diyRule="^[a-z][A-Za-z0-9]{5,10}" /><span id="usernameTip" />
+            </p>
+    
+            <p>
+                <label>密码</label>
+                <input type="password" name="password" id="userpwd" diyCheck="6-11位字母和数字组合" required="required" diyRule="^[A-Za-z0-9]{6,11}" />
+            </p>
+           <p>
+                <input type="button" name="" value="登录" id="btn_login" />
+            </p>
+        </form>
+    </div>
     <script>
-    var eg = {}
-    eg.$ = function(id) {
-        return document.getElementById(id)
-    }
-    eg.regCheck = function() {
-        var username = eg.$("username")
-        var userpwd = eg.$("userpwd")
-        var userpwd2 = eg.$("userpwd2")
-        // if (username.value == "") {
-        //     alert("账号不能为空")
-        //     return false
-        // }
-        // if (userpwd.value == "") {
-        //     alert("密码不能为空")
-        //     return false
-        // }
-        if (userpwd.value != userpwd2.value) {
-            alert("两次密码不相同！")
-            return false
-        }
 
-        return true
-    }
-    // eg.addListener=function(target,type,handler){
-    //     if (target.addEventListener) {
-    //         target.addEventListener(type,handler,false)
-    //     }
-    // }
-    eg.AJAX = function(config, callback) {
-        var xmlhttp;
-        if (window.XMLHttpRequest) {
-            //  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
-            xmlhttp = new XMLHttpRequest();
-        } else {
-            // IE6, IE5 浏览器执行代码
-            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                callback(xmlhttp.responseText)
-            }
-        }
-        xmlhttp.open(config.TYPE, config.URL, true);
-        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xmlhttp.send(config.DATA);
-        console.log(config)
-    }
+$("#btn_login").click(()=>{
+    $.ajax({
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                url: "../users/user/accesstoken" ,//url
+                data: $('#loginForm').serialize(),
+                success: function (result) {
+                    console.log(result);//打印服务端返回的数据(调试用)
+                     if (result.success) {
 
+                        alert("登录成功")
+                     }else{
+                         alert("登录失败")
+                     }
+                },
+                error : function() {
+                    alert("异常！");
+                }
+            });
+    });
 
-    eg.checkUser = function() {
-        var userName = eg.$("username")
-        if (userName.value=="") {
-         eg.$("usernameTip").innerHTML = ""
-            return}
-        eg.AJAX({
-            TYPE: "POST",
-            URL: "login/checkUser",
-            DATA: "name=" + userName.value
-        }, function(data) {
-            var json = new Function("return" + data)()
-            var tip = ""
-            if (json.success) {
-                tip = "✔该用户可以注册"
-            } else {
-                tip = "×该用户已存在"
-            }
-            eg.$("usernameTip").innerHTML = tip
-        });
-    }
-
-    var userName = eg.$("username")
-    var userpwd = eg.$("userpwd")
-    var userpwd2 = eg.$("userpwd2")
-    var uemail = eg.$("email")
-    var lst=eg.$("lst")
-    userName.onblur = function() {
-        console.log("onblur")
-        eg.checkUser()
-    }
-    eg.checkPwd=function(){
-        var userpwd = eg.$("userpwd")
-        var userpwd2 = eg.$("userpwd2")
-        var tip=""
-        if (userpwd.value != userpwd2.value) {
-          tip="×两次密码不相同"
-        }else{
-          tip="✔"
-        }
-        eg.$("pwdTip").innerHTML = tip
-    }
-        eg.$("userpwd").onblur=function(){
- eg.checkPwd()
-    } 
-    eg.$("userpwd2").onblur=function(){
- eg.checkPwd()
-    } 
-
-    var datalist=["qq.com","163.com","gmail.com","sina.com","126.com"]
-    uemail.oninput=function(){
-        lst.innerHTML=""
-        var k=uemail.value  
-        if (k.indexOf("@")>-1) {return} 
-        if (k.value == "") { return}
-        var newStr=""
-    for (var i = 0; i <datalist.length; i++) {
-        newStr+='<option value="'+k+"@"+datalist[i]+'"/>';
-           }
-         lst.innerHTML=newStr
-    }
-    //  eg.$("userpwd").onblur=function(){
-    //           var userpwd = eg.$("userpwd")
-    //     var userpwd2 = eg.$("userpwd2")
-    //     var tip=""
-    //     if (userpwd.value != userpwd2.value) {
-    //       tip="×两次密码不相同"
-    //     }else{
-    //       tip="✔"
-    //     }
-    //     eg.$("pwdTip").innerHTML = tip
-    // }
+         $("#loginForm").validate({     
+     submitHandler: function(form) 
+   {      
+    // action="../users/user/accesstoken"
+      $(form).ajaxSubmit(        {  
+                url: '../users/user/accesstoken11',  
+                type: 'post',  
+                beforeSubmit: function () {},  
+                success: function (data) {  
+                    if (data.success) {  
+                     alter("登录成功")
+                    } else {  
+                        alert(data.mesage);  
+                    }  
+                },  
+                clearForm: false,//禁止清楚表单  
+                resetForm: false //禁止重置表单  
+            });     
+   }  
+ }) 
     </script>
 </body>
 

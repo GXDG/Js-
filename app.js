@@ -10,6 +10,19 @@ var loginRouter = require('./routes/login');
 
 var app = express();
 
+const bodyParser = require('body-parser');// 解析body字段模块
+const morgan = require('morgan'); // 命令行log显示
+const mongoose = require('mongoose');
+const passport = require('passport');// 用户认证模块passport
+const Strategy = require('passport-http-bearer').Strategy;// token验证模块
+const config = require('./config');
+app.use(passport.initialize());// 初始化passport模块
+app.use(morgan('dev'));// 命令行中显示程序运行日志,便于bug调试
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json()); // 调用bodyParser模块以便程序正确解析body传入值
+mongoose.Promise = global.Promise;
+mongoose.connect(config.database); 
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
